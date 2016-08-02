@@ -1,0 +1,39 @@
+{
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "database": "",
+    "port": "",
+    "s3-access-key": "",
+    "s3-secret-key": "",
+    "email-recipient-list": ["foo@bar.io"],
+    "emailsubject": "Check Table and Send Email",
+    "email-template": "./docker-share/check-table-email-template.html",
+    "tablename": "public.test_table_sink",
+    "keys": {
+        "create-table": {
+            "sql": "create table public.test_table_sink(colone varchar(100), coltwo varchar(100));",
+            "query-type": "execute_non_query"
+        },
+        "test-execute_non_query": {
+            "sql": "insert into public.test_table_sink values ('test1', 'test2'), ('test3', 'test4');",
+            "query-type": "execute_non_query"
+        },
+         "selectquery": {
+            "sql": "SELECT * FROM public.test_table_sink",
+            "query-type": "execute_query",
+            "fetch-rows": "1000",
+            "DK_DOC": "fetch-rows cannot exceed 100 rows for single node redshift"
+        },
+        "countquery": {
+            "sql": "SELECT COUNT(*) FROM public.test_table_sink",
+            "query-type": "execute_scalar"
+        }
+    },
+    "send-email-test": {
+        "count-key": "countquery",
+        "ACDOC": ["greater-than", "less-than", "equal-to"],
+        "test-logic": "greater-than",
+        "test-value": 1
+    }
+}

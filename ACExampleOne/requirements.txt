@@ -1,0 +1,5 @@
+
+docker-py==1.5.0
+AnalyticMicroService==0.23
+
+

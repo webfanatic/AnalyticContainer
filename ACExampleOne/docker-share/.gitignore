@@ -1,0 +1,15 @@
+
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+
+
+.project
+.pydevproject
+.idea
+
+ac_logger.log
+progress.json
