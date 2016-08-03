@@ -48,7 +48,7 @@ class ACBase(object):
             try:
                 with open(self.inside_config_file) as the_file:
                     self.configuration = json.load(the_file, object_pairs_hook=OrderedDict)
-            except ValueError, e:
+            except (IOError, ValueError), e:
                 s = 'ACBase:  unable to load config.json  %s %s' % (type(e), e.args)
                 self.valid_configuration = False
                 ACLogger.log_and_print_error(s)
@@ -76,8 +76,12 @@ class ACBase(object):
         self.progress[key] = value
 
     def write_progress(self):
-        with open(self.inside_progess_file, 'w') as the_file:
-            the_file.write(json.dumps(self.get_progress(), indent=4))
+        try:
+            with open(self.inside_progess_file, 'w') as the_file:
+                the_file.write(json.dumps(self.get_progress(), indent=4))
+        except (IOError, ValueError), e:
+            s = 'ACBase:  unable to write_progress.json  %s %s' % (type(e), e.args)
+            ACLogger.log_and_print_error(s)
 
     def parse_command_line(self, parser):
         try:

@@ -64,7 +64,7 @@ class ACPostgreSQL(object):
         try:
             with open(file_manifest_json) as data_file:
                 self.config_dict = json.load(data_file, object_pairs_hook=OrderedDict)
-        except Exception, ex:
+        except (IOError,ValueError), ex:
             ACLogger().get_logger().error('invalid json loaded to ACPostgreSQL %s', ex.message)
             self.config_dict = None
             return False
