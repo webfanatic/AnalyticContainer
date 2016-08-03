@@ -21,7 +21,11 @@
 ```
          docker rm $(docker ps -a -q)
          docker rm $(docker ps -a | grep ac_check_table_and_email) 
-         docker rm $(docker ps -a | grep data_ac_check_table_and_email)  
+         docker rm $(docker ps -a | grep data_ac_check_table_and_email) 
+```
+## cleanup images (you may have to cleanup contianers first)
+```         
+         docker rmi $(docker images | grep ac_check_table_and_email) 
 ```
 ## cleanup stranded volumes:  https://github.com/chadoe/docker-cleanup-volumes
 ```
