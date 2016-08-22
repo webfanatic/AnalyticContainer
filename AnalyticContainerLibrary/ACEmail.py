@@ -225,21 +225,26 @@ class ACAWSEmailSender(ACEmailSender):
     def apply_template_and_send_email(self, template, send_list, sub_dict, subject_str, text_str=None):
         if template is None or send_list is None or sub_dict is None or subject_str is None:
             return False
-
         if text_str is None:
             text_str = BeautifulSoup(template.safe_substitute(sub_dict), "html.parser").get_text()
-        for email_addr in send_list:
-            self.send_email(sender=AC_EMAIL_FROM,
-                            to_addresses=email_addr,
-                            subject=subject_str,
-                            text=text_str,
-                            html=template.safe_substitute(sub_dict),
-                            reply_addresses=None,
-                            sender_ascii=AC_EMAIL_ASCII_SENDER)
-            return True
-        else:
-            ACLogger().get_logger().error('unable to open amazon emails')
-            return False
+        for email_address in send_list:
+            error_str = ""
+            try:
+                send_response = self.send_email(sender=AC_EMAIL_FROM,
+                                to_addresses=email_address,
+                                subject=subject_str,
+                                text=text_str,
+                                html=template.safe_substitute(sub_dict),
+                                reply_addresses=None,
+                                sender_ascii=AC_EMAIL_ASCII_SENDER)
+            except Exception, e:
+                send_response = None
+                error_str = str(e)
+            if send_response is None:
+                ACLogger.log_and_print_error('Unable to send emails to %s, error=%s' % (str(email_address), error_str))
+                ACLogger.log_and_print_error('Continuing to try and send emails.')
+                return False
+        return True
 
     def apply_template_and_send_email_with_attachments(self, template, send_list, sub_dict, subject_str,
                                                        text_str=None, attachments=None):
@@ -249,18 +254,24 @@ class ACAWSEmailSender(ACEmailSender):
         if text_str is None:
             text_str = BeautifulSoup(template.safe_substitute(sub_dict), "html.parser").get_text()
 
-        for email_addresses in send_list:
-            send_response = self.send_email_with_attachments(sender=AC_EMAIL_FROM,
-                                                             to_addresses=email_addresses,
+        for email_address in send_list:
+            error_str = ""
+            try:
+                send_response = self.send_email_with_attachments(sender=AC_EMAIL_FROM,
+                                                             to_addresses=email_address,
                                                              subject=subject_str,
                                                              text=text_str,
                                                              html=template.safe_substitute(sub_dict),
                                                              sender_ascii=AC_EMAIL_ASCII_SENDER,
                                                              reply_addresses=None,
                                                              attachment_dict=attachments)
+            except Exception, e:
+                send_response = None
+                error_str = str(e)
             if send_response is None:
-                ACLogger.log_and_print_error('Unable to send emails to %s' % str(email_addresses))
+                ACLogger.log_and_print_error('Unable to send emails to %s, error=%s' % (str(email_address), error_str))
                 ACLogger.log_and_print_error('Continuing to try and send emails.')
+                return False
         return True
 
     def verify_email(self, email):

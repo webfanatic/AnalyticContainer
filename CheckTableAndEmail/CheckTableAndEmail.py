@@ -79,6 +79,19 @@ class CheckTableAndEmail(ACBase):
             return False
         if AC_EMAIL_SEND_TEST not in self.config_dict:
             return False
+        if AC_EMAIL_LIST not in self.config_dict:
+            return False
+        if isinstance(self.config_dict[AC_EMAIL_LIST], basestring):
+            em = self.config_dict[AC_EMAIL_LIST]
+            self.config_dict[AC_EMAIL_LIST] = list()
+            self.config_dict[AC_EMAIL_LIST].append(em)
+        elif isinstance(self.config_dict[AC_EMAIL_LIST], list):
+            if len(self.config_dict[AC_EMAIL_LIST]) == 0:
+                return False
+        else:
+            return False
+        if AC_EMAIL_SUBJECT not in self.config_dict:
+            self.config_dict[AC_EMAIL_SUBJECT] = "Check Table And Send Email"
         if AC_EMAIL_COUNT_KEY not in self.config_dict[AC_EMAIL_SEND_TEST]:
             return False
         if AC_EMAIL_TEST_LOGIC not in self.config_dict[AC_EMAIL_SEND_TEST]:
