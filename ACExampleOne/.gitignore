@@ -6,7 +6,7 @@
 dist
 build
 
-
+*.pyc
 .project
 .pydevproject
 .idea
